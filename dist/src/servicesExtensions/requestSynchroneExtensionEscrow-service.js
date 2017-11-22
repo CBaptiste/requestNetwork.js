@@ -68,9 +68,6 @@ var RequestSynchroneExtensionEscrowService = /** @class */ (function () {
     RequestSynchroneExtensionEscrowService.prototype.releaseToPayeeAsync = function (_requestId, _numberOfConfirmation, _from, _gasPrice, _gasLimit) {
         var _this = this;
         if (_numberOfConfirmation === void 0) { _numberOfConfirmation = 0; }
-        if (_from === void 0) { _from = undefined; }
-        if (_gasPrice === void 0) { _gasPrice = undefined; }
-        if (_gasLimit === void 0) { _gasLimit = undefined; }
         return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
             var account, _a, request, method;
             return __generator(this, function (_b) {
@@ -118,9 +115,6 @@ var RequestSynchroneExtensionEscrowService = /** @class */ (function () {
         }); });
     };
     RequestSynchroneExtensionEscrowService.prototype.releaseToPayee = function (_requestId, _callbackTransactionHash, _callbackTransactionReceipt, _callbackTransactionConfirmation, _callbackTransactionError, _from, _gasPrice, _gasLimit) {
-        if (_from === void 0) { _from = undefined; }
-        if (_gasPrice === void 0) { _gasPrice = undefined; }
-        if (_gasLimit === void 0) { _gasLimit = undefined; }
         return __awaiter(this, void 0, void 0, function () {
             var account, _a, request, method;
             return __generator(this, function (_b) {
@@ -159,9 +153,6 @@ var RequestSynchroneExtensionEscrowService = /** @class */ (function () {
     RequestSynchroneExtensionEscrowService.prototype.refundToPayerAsync = function (_requestId, _numberOfConfirmation, _from, _gasPrice, _gasLimit) {
         var _this = this;
         if (_numberOfConfirmation === void 0) { _numberOfConfirmation = 0; }
-        if (_from === void 0) { _from = undefined; }
-        if (_gasPrice === void 0) { _gasPrice = undefined; }
-        if (_gasLimit === void 0) { _gasLimit = undefined; }
         return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
             var _this = this;
             var account, _a, request, method;
@@ -211,9 +202,6 @@ var RequestSynchroneExtensionEscrowService = /** @class */ (function () {
         }); });
     };
     RequestSynchroneExtensionEscrowService.prototype.refundToPayer = function (_requestId, _callbackTransactionHash, _callbackTransactionReceipt, _callbackTransactionConfirmation, _callbackTransactionError, _from, _gasPrice, _gasLimit) {
-        if (_from === void 0) { _from = undefined; }
-        if (_gasPrice === void 0) { _gasPrice = undefined; }
-        if (_gasLimit === void 0) { _gasLimit = undefined; }
         return __awaiter(this, void 0, void 0, function () {
             var account, _a, request, method;
             return __generator(this, function (_b) {

@@ -94,8 +94,8 @@ export class Web3Single {
         return this.web3.utils.isAddress(address.toLowerCase());
     }
 
-    public areSameAddressesNoChecksum(address1: string,address2: string): boolean {
-        return address1.toLowerCase()==address2.toLowerCase();
+    public areSameAddressesNoChecksum(address1: string, address2: string): boolean {
+        return address1.toLowerCase() == address2.toLowerCase();
     }
 
     public isHexStrictBytes32(hex: string): boolean {

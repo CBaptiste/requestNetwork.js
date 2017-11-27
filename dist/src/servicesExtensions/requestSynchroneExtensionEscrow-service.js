@@ -67,11 +67,7 @@ var RequestSynchroneExtensionEscrowService = /** @class */ (function () {
     };
     RequestSynchroneExtensionEscrowService.prototype.releaseToPayeeAsync = function (_requestId, _options) {
         var _this = this;
-<<<<<<< HEAD
-        if (_numberOfConfirmation === void 0) { _numberOfConfirmation = 0; }
-=======
         _options = this.web3Single.setUpOptions(_options);
->>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
         return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
             var account, _a, request, method;
             return __generator(this, function (_b) {
@@ -118,11 +114,7 @@ var RequestSynchroneExtensionEscrowService = /** @class */ (function () {
             });
         }); });
     };
-<<<<<<< HEAD
-    RequestSynchroneExtensionEscrowService.prototype.releaseToPayee = function (_requestId, _callbackTransactionHash, _callbackTransactionReceipt, _callbackTransactionConfirmation, _callbackTransactionError, _from, _gasPrice, _gasLimit) {
-=======
     RequestSynchroneExtensionEscrowService.prototype.releaseToPayee = function (_requestId, _callbackTransactionHash, _callbackTransactionReceipt, _callbackTransactionConfirmation, _callbackTransactionError, _options) {
->>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
         return __awaiter(this, void 0, void 0, function () {
             var account, _a, request, method;
             return __generator(this, function (_b) {
@@ -161,11 +153,7 @@ var RequestSynchroneExtensionEscrowService = /** @class */ (function () {
     };
     RequestSynchroneExtensionEscrowService.prototype.refundToPayerAsync = function (_requestId, _options) {
         var _this = this;
-<<<<<<< HEAD
-        if (_numberOfConfirmation === void 0) { _numberOfConfirmation = 0; }
-=======
         _options = this.web3Single.setUpOptions(_options);
->>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
         return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
             var _this = this;
             var account, _a, request, method;
@@ -214,11 +202,7 @@ var RequestSynchroneExtensionEscrowService = /** @class */ (function () {
             });
         }); });
     };
-<<<<<<< HEAD
-    RequestSynchroneExtensionEscrowService.prototype.refundToPayer = function (_requestId, _callbackTransactionHash, _callbackTransactionReceipt, _callbackTransactionConfirmation, _callbackTransactionError, _from, _gasPrice, _gasLimit) {
-=======
     RequestSynchroneExtensionEscrowService.prototype.refundToPayer = function (_requestId, _callbackTransactionHash, _callbackTransactionReceipt, _callbackTransactionConfirmation, _callbackTransactionError, _options) {
->>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
         return __awaiter(this, void 0, void 0, function () {
             var account, _a, request, method;
             return __generator(this, function (_b) {

@@ -3,7 +3,6 @@ import config from '../config';
 import * as Types from '../types';
 var Web3 = require('web3');
 // const Web3 = require('web3');
-
 // declare var require: (moduleId: string) => any;
 const ethABI = require('../lib/ethereumjs-abi-perso.js');
 
@@ -11,7 +10,7 @@ export class Web3Single {
     public web3: any;
 
     constructor(web3Provider ? : any) {
-        this.web3 = new Web3(web3Provider ||  new Web3.providers.HttpProvider(config.ethereum.node_url));
+        this.web3 = new Web3(web3Provider ||  new Web3.providers.HttpProvider(config.ethereum.node_url));
     }
 
     public async broadcastMethod(_method: any,
@@ -56,7 +55,6 @@ export class Web3Single {
     //         })
     //     });
     // }
-
     public async getDefaultAccount(): Promise < any > {
         return new Promise((resolve, reject) => {
             this.web3.eth.getAccounts((err, accs) => {
@@ -88,8 +86,8 @@ export class Web3Single {
         return this.web3.utils.isAddress(address.toLowerCase());
     }
 
-    public areSameAddressesNoChecksum(address1: string, address2: string): boolean {
-        return address1.toLowerCase() == address2.toLowerCase();
+    public areSameAddressesNoChecksum(address1: string,address2: string): boolean {
+        return address1.toLowerCase()==address2.toLowerCase();
     }
 
     public isHexStrictBytes32(hex: string): boolean {

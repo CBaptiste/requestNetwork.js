@@ -40,19 +40,24 @@ export default class RequestEthereumService {
     public async createRequestAsPayeeAsync(
         _payer: string,
         _amountInitial: any,
-        _extension: string,
-        _extensionParams: Array < any > ,
         _details: string,
-        _numberOfConfirmation: number = 0,
-        _from ? : string,
-        _gasPrice ? : any,
-        _gasLimit ? : any): Promise < any > {
+        _extension ? : string,
+        _extensionParams ? : Array < any > ,
+        _options ? : any,
+        ): Promise < any > {
         _amountInitial = new BigNumber(_amountInitial);
+<<<<<<< HEAD
         if (_gasPrice) _gasPrice = new BigNumber(_gasPrice);
         if (_gasLimit) _gasLimit = new BigNumber(_gasLimit);
 
         return new Promise(async(resolve, reject) => {
             let account = _from || await this.web3Single.getDefaultAccount();
+=======
+        _options = this.web3Single.setUpOptions(_options);
+
+        return new Promise(async (resolve, reject) => {
+            let account = _options.from || await this.web3Single.getDefaultAccount();
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
             // check _details is a proper JSON
             if (_amountInitial.lt(0)) return reject(Error('_amountInitial must a positive integer'));
             if (!this.web3Single.isAddressNoChecksum(_payer)) return reject(Error('_payer must be a valid eth address'));
@@ -91,19 +96,17 @@ export default class RequestEthereumService {
                     (receipt: any) => {
                         // we do nothing here!
                     },
-                    (confirmationNumber: number, receipt: any) => {
-                        if (confirmationNumber == _numberOfConfirmation) {
-                            var event = this.web3Single.decodeLog(this.abiRequestCore, 'Created', receipt.events[0]);
-                            return resolve({ requestId: event.requestId, transactionHash: receipt.transactionHash, ipfsHash: hash });
+                    async (confirmationNumber: number, receipt: any) => {
+                        if (confirmationNumber == _options.numberOfConfirmation) {
+                            let event = this.web3Single.decodeLog(this.abiRequestCore, 'Created', receipt.events[0]);
+                            let request = await this.getRequestAsync(event.requestId);
+                            return resolve({ request: request, transactionHash: receipt.transactionHash});
                         }
                     },
                     (error: Error) => {
                         return reject(error);
                     },
-                    undefined,
-                    _from,
-                    _gasPrice,
-                    _gasLimit);
+                    _options);
             });
         });
     }
@@ -118,6 +121,7 @@ export default class RequestEthereumService {
         _callbackTransactionReceipt: Types.CallbackTransactionReceipt,
         _callbackTransactionConfirmation: Types.CallbackTransactionConfirmation,
         _callbackTransactionError: Types.CallbackTransactionError,
+<<<<<<< HEAD
         _from ? : string,
         _gasPrice ? : any,
         _gasLimit ? : any): Promise < any > {
@@ -126,6 +130,12 @@ export default class RequestEthereumService {
         if (_gasLimit) _gasLimit = new BigNumber(_gasLimit);
 
         let account = _from || await this.web3Single.getDefaultAccount();
+=======
+        _options ? : any): Promise<any> {
+        _amountInitial = new BigNumber(_amountInitial);
+        _options = this.web3Single.setUpOptions(_options);
+        let account = _options.from || await this.web3Single.getDefaultAccount();
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
 
         if (_amountInitial.lt(0)) return _callbackTransactionError(Error('_amountInitial must a positive integer'));
         if (!this.web3Single.isAddressNoChecksum(_payer)) return _callbackTransactionError(Error('_payer must be a valid eth address'));
@@ -162,16 +172,14 @@ export default class RequestEthereumService {
                 _callbackTransactionReceipt,
                 _callbackTransactionConfirmation,
                 _callbackTransactionError,
-                undefined,
-                _from,
-                _gasPrice,
-                _gasLimit);
+                _options);
         });
     }
 
 
     public acceptAsync(
         _requestId: string,
+<<<<<<< HEAD
         _numberOfConfirmation: number = 0,
         _from ? : string,
         _gasPrice ? : any,
@@ -183,6 +191,16 @@ export default class RequestEthereumService {
                 let request = await this.getRequestAsync(_requestId);
                 let account = _from || await this.web3Single.getDefaultAccount();
                 if (request.state != Types.State.Created) {
+=======
+        _options ? : any): Promise < any > {
+        _options = this.web3Single.setUpOptions(_options);
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let request = await this.getRequestAsync(_requestId);    
+                let account = _options.from || await this.web3Single.getDefaultAccount();
+                if ( request.state != Types.State.Created) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                     return reject(Error('request state is not \'created\''));
                 }
                 if (!this.web3Single.areSameAddressesNoChecksum(account, request.payer)) {
@@ -202,20 +220,26 @@ export default class RequestEthereumService {
                     (receipt: any) => {
                         // we do nothing here!
                     },
-                    (confirmationNumber: number, receipt: any) => {
-                        if (confirmationNumber == _numberOfConfirmation) {
+                    async (confirmationNumber: number, receipt: any) => {
+                        if (confirmationNumber == _options.numberOfConfirmation) {
                             var event = this.web3Single.decodeLog(this.abiRequestCore, 'Accepted', receipt.events[0]);
-                            return resolve({ requestId: event.requestId, transactionHash: receipt.transactionHash });
+                            let request = await this.getRequestAsync(event.requestId);
+                            return resolve({ request: request, transactionHash: receipt.transactionHash});
                         }
                     },
                     (error: Error) => {
                         return reject(error);
                     },
+<<<<<<< HEAD
                     undefined,
                     _from,
                     _gasPrice,
                     _gasLimit);
             } catch (e) {
+=======
+                    _options);
+            } catch(e) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                 return reject(e);
             }
         });
@@ -227,6 +251,7 @@ export default class RequestEthereumService {
         _callbackTransactionReceipt: Types.CallbackTransactionReceipt,
         _callbackTransactionConfirmation: Types.CallbackTransactionConfirmation,
         _callbackTransactionError: Types.CallbackTransactionError,
+<<<<<<< HEAD
         _from ? : string,
         _gasPrice ? : any,
         _gasLimit ? : any): Promise < any > {
@@ -237,6 +262,15 @@ export default class RequestEthereumService {
             let request = await this.getRequestAsync(_requestId);
             let account = _from || await this.web3Single.getDefaultAccount();
             if (request.state != Types.State.Created) {
+=======
+        _options ? : any): Promise<any> {
+        _options = this.web3Single.setUpOptions(_options);
+
+        try {
+            let request = await this.getRequestAsync(_requestId);    
+            let account = _options.from || await this.web3Single.getDefaultAccount();
+            if ( request.state != Types.State.Created) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                 return _callbackTransactionError(Error('request state is not \'created\''));
             }
             if (!this.web3Single.areSameAddressesNoChecksum(account, request.payer)) {
@@ -253,17 +287,23 @@ export default class RequestEthereumService {
                 _callbackTransactionReceipt,
                 _callbackTransactionConfirmation,
                 _callbackTransactionError,
+<<<<<<< HEAD
                 undefined,
                 _from,
                 _gasPrice,
                 _gasLimit);
         } catch (e) {
+=======
+                _options);
+        } catch(e) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
             throw e;
         }
     }
 
     public cancelAsync(
         _requestId: string,
+<<<<<<< HEAD
         _numberOfConfirmation: number = 0,
         _from ? : string,
         _gasPrice ? : any,
@@ -276,6 +316,16 @@ export default class RequestEthereumService {
                 let request = await this.getRequestAsync(_requestId);
                 let account = _from || await this.web3Single.getDefaultAccount();
                 if (!this.web3Single.areSameAddressesNoChecksum(account, request.payer) && !this.web3Single.areSameAddressesNoChecksum(account, request.payee)) {
+=======
+        _options ? : any): Promise < any > {
+        _options = this.web3Single.setUpOptions(_options);
+        
+        return new Promise(async (resolve, reject) => {
+            try {
+                let request = await this.getRequestAsync(_requestId);    
+                let account = _options.from || await this.web3Single.getDefaultAccount();
+                if ( !this.web3Single.areSameAddressesNoChecksum(account, request.payer) && !this.web3Single.areSameAddressesNoChecksum(account, request.payee) ) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                     return reject(Error('account must be the payer or the payee'));
                 }
                 if (this.web3Single.areSameAddressesNoChecksum(account, request.payer) && request.state != Types.State.Created) {
@@ -300,20 +350,26 @@ export default class RequestEthereumService {
                     (receipt: any) => {
                         // we do nothing here!
                     },
-                    (confirmationNumber: number, receipt: any) => {
-                        if (confirmationNumber == _numberOfConfirmation) {
+                    async (confirmationNumber: number, receipt: any) => {
+                        if (confirmationNumber == _options.numberOfConfirmation) {
                             var event = this.web3Single.decodeLog(this.abiRequestCore, 'Canceled', receipt.events[0]);
-                            return resolve({ requestId: event.requestId, transactionHash: receipt.transactionHash });
+                            let request = await this.getRequestAsync(event.requestId);
+                            return resolve({ request: request, transactionHash: receipt.transactionHash});
                         }
                     },
                     (error: Error) => {
                         return reject(error);
                     },
+<<<<<<< HEAD
                     undefined,
                     _from,
                     _gasPrice,
                     _gasLimit);
             } catch (e) {
+=======
+                    _options);
+            } catch(e) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                 return reject(e);
             }
         });
@@ -325,6 +381,7 @@ export default class RequestEthereumService {
         _callbackTransactionReceipt: Types.CallbackTransactionReceipt,
         _callbackTransactionConfirmation: Types.CallbackTransactionConfirmation,
         _callbackTransactionError: Types.CallbackTransactionError,
+<<<<<<< HEAD
         _from ? : string,
         _gasPrice ? : any,
         _gasLimit ? : any): Promise < any > {
@@ -336,6 +393,16 @@ export default class RequestEthereumService {
             let account = _from || await this.web3Single.getDefaultAccount();
             if (!this.web3Single.areSameAddressesNoChecksum(account, request.payer) && !this.web3Single.areSameAddressesNoChecksum(account, request.payee)) {
                 return _callbackTransactionError(Error('account must be the payer or the payee'));
+=======
+        _options ? : any): Promise<any> {
+        _options = this.web3Single.setUpOptions(_options);
+        
+        try {
+            let request = await this.getRequestAsync(_requestId);    
+            let account = _options.from || await this.web3Single.getDefaultAccount();
+            if ( !this.web3Single.areSameAddressesNoChecksum(account, request.payer) && !this.web3Single.areSameAddressesNoChecksum(account, request.payee) ) {
+               return _callbackTransactionError(Error('account must be the payer or the payee'));
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
             }
             if (this.web3Single.areSameAddressesNoChecksum(account, request.payer) && request.state != Types.State.Created) {
                 return _callbackTransactionError(Error('payer can cancel request in state \'created\''));
@@ -357,11 +424,16 @@ export default class RequestEthereumService {
                 _callbackTransactionReceipt,
                 _callbackTransactionConfirmation,
                 _callbackTransactionError,
+<<<<<<< HEAD
                 undefined,
                 _from,
                 _gasPrice,
                 _gasLimit);
         } catch (e) {
+=======
+                _options);
+        } catch(e) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
             throw e;
         }
     }
@@ -370,12 +442,10 @@ export default class RequestEthereumService {
         _requestId: string,
         _amount: any,
         _tips: any,
-        _numberOfConfirmation: number = 0,
-        _from ? : string,
-        _gasPrice ? : any,
-        _gasLimit ? : any): Promise < any > {
-        _amount = new BigNumber(_amount);
+        _options ? : any): Promise < any > {
+
         _tips = new BigNumber(_tips);
+<<<<<<< HEAD
         if (_gasPrice) _gasPrice = new BigNumber(_gasPrice);
         if (_gasLimit) _gasLimit = new BigNumber(_gasLimit);
 
@@ -383,19 +453,32 @@ export default class RequestEthereumService {
             try {
                 let request = await this.getRequestAsync(_requestId);
                 let account = _from || await this.web3Single.getDefaultAccount();
+=======
+        _options = this.web3Single.setUpOptions(_options);
+        _options.value = new BigNumber(_amount);
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                let request = await this.getRequestAsync(_requestId);    
+                let account = _options.from || await this.web3Single.getDefaultAccount();
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
 
                 // TODO check from == payer ?
                 // TODO check if this is possible ? (quid if other tx pending)
                 if (!this.web3Single.isHexStrictBytes32(_requestId)) return reject(Error('_requestId must be a 32 bytes hex string (eg.: \'0x0000000000000000000000000000000000000000000000000000000000000000\''));
                 // TODO use bigNumber
-                if (_amount.lt(0)) return reject(Error('_amount must a positive integer'));
+                if (_options.value.lt(0)) return reject(Error('_amount must a positive integer'));
                 // TODO use bigNumber
                 if (_tips.lt(0)) return reject(Error('_tips must a positive integer'));
 
                 if (request.state != Types.State.Accepted) {
                     return reject(Error('request must be accepted'));
                 }
+<<<<<<< HEAD
                 if (_amount.lt(_tips)) {
+=======
+                if ( _options.value.lt(_tips) ) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                     return reject(Error('tips declare must be lower than amount sent'));
                 }
                 if (request.amountInitial.add(request.amountAdditional).sub(request.amountSubtract).lt(_amount)) {
@@ -412,20 +495,26 @@ export default class RequestEthereumService {
                     (receipt: any) => {
                         // we do nothing here!
                     },
-                    (confirmationNumber: number, receipt: any) => {
-                        if (confirmationNumber == _numberOfConfirmation) {
+                    async (confirmationNumber: number, receipt: any) => {
+                        if (confirmationNumber == _options.numberOfConfirmation) {
                             var event = this.web3Single.decodeLog(this.abiRequestCore, 'Payment', receipt.events[0]);
-                            return resolve({ requestId: event.requestId, transactionHash: receipt.transactionHash });
+                            let request = await this.getRequestAsync(event.requestId);
+                            return resolve({ request: request, transactionHash: receipt.transactionHash});
                         }
                     },
                     (error: Error) => {
                         return reject(error);
                     },
+<<<<<<< HEAD
                     _amount,
                     _from,
                     _gasPrice,
                     _gasLimit);
             } catch (e) {
+=======
+                    _options);
+            } catch(e) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                 return reject(e);
             }
         });
@@ -439,6 +528,7 @@ export default class RequestEthereumService {
         _callbackTransactionReceipt: Types.CallbackTransactionReceipt,
         _callbackTransactionConfirmation: Types.CallbackTransactionConfirmation,
         _callbackTransactionError: Types.CallbackTransactionError,
+<<<<<<< HEAD
         _from ? : string,
         _gasPrice ? : any,
         _gasLimit ? : any): Promise < any > {
@@ -450,17 +540,31 @@ export default class RequestEthereumService {
         try {
             let request = await this.getRequestAsync(_requestId);
             let account = _from || await this.web3Single.getDefaultAccount();
+=======
+        _options ? : any): Promise<any> {
+        _tips = new BigNumber(_tips);
+        _options = this.web3Single.setUpOptions(_options);
+        _options.value = new BigNumber(_amount);
+        
+        try {
+            let request = await this.getRequestAsync(_requestId);    
+            let account = _options.from || await this.web3Single.getDefaultAccount();
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
 
             // TODO check if this is possible ? (quid if other tx pending)
             if (!this.web3Single.isHexStrictBytes32(_requestId)) return _callbackTransactionError(Error('_requestId must be a 32 bytes hex string (eg.: \'0x0000000000000000000000000000000000000000000000000000000000000000\''));
             // TODO use bigNumber
-            if (_amount.lt(0) /* || !_amount.isInteger()*/ ) return _callbackTransactionError(Error('_amount must a positive integer'));
+            if (_options.value.lt(0) /* || !_amount.isInteger()*/ ) return _callbackTransactionError(Error('_amount must a positive integer'));
             // TODO use bigNumber
             if (_tips.lt(0) /* || !_tips.isInteger()*/ ) return _callbackTransactionError(Error('_tips must a positive integer'));
             if (request.state != Types.State.Accepted) {
                 return _callbackTransactionError(Error('request must be accepted'));
             }
+<<<<<<< HEAD
             if (_amount.lt(_tips)) {
+=======
+            if ( _options.value.lt(_tips) ) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                 return _callbackTransactionError(Error('tips declare must be lower than amount sent'));
             }
             if (request.amountInitial.add(request.amountAdditional).sub(request.amountSubtract).lt(_amount)) {
@@ -475,11 +579,16 @@ export default class RequestEthereumService {
                 _callbackTransactionReceipt,
                 _callbackTransactionConfirmation,
                 _callbackTransactionError,
+<<<<<<< HEAD
                 _amount,
                 _from,
                 _gasPrice,
                 _gasLimit);
         } catch (e) {
+=======
+                _options);
+        } catch(e) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
             throw e;
         }
     }
@@ -488,6 +597,7 @@ export default class RequestEthereumService {
     public async paybackAsync(
         _requestId: string,
         _amount: any,
+<<<<<<< HEAD
         _numberOfConfirmation: number = 0,
         _from ? : string,
         _gasPrice ? : any,
@@ -500,11 +610,21 @@ export default class RequestEthereumService {
             try {
                 let request = await this.getRequestAsync(_requestId);
                 let account = _from || await this.web3Single.getDefaultAccount();
+=======
+        _options ? : any): Promise < any > {
+        _options = this.web3Single.setUpOptions(_options);
+        _options.value = new BigNumber(_amount);
+        
+        return new Promise(async (resolve, reject) => {
+            try {
+                let request = await this.getRequestAsync(_requestId);    
+                let account = _options.from || await this.web3Single.getDefaultAccount();
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
 
                 // TODO check if this is possible ? (quid if other tx pending)
                 if (!this.web3Single.isHexStrictBytes32(_requestId)) return reject(Error('_requestId must be a 32 bytes hex string (eg.: \'0x0000000000000000000000000000000000000000000000000000000000000000\''));
                 // TODO use bigNumber
-                if (_amount.lt(0) /* || !_amount.isInteger()*/ ) return reject(Error('_amount must a positive integer'));
+                if (_options.value.lt(0) ) return reject(Error('_amount must a positive integer'));
 
                 if (request.state != Types.State.Accepted) {
                     return reject(Error('request must be accepted'));
@@ -512,7 +632,11 @@ export default class RequestEthereumService {
                 if (!this.web3Single.areSameAddressesNoChecksum(account, request.payee)) {
                     return reject(Error('account must be payee'));
                 }
+<<<<<<< HEAD
                 if (_amount > request.amountPaid) {
+=======
+                if ( _options.value.gt(request.amountPaid) ) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                     return reject(Error('You cannot payback more than what has been paid'));
                 }
 
@@ -526,20 +650,26 @@ export default class RequestEthereumService {
                     (receipt: any) => {
                         // we do nothing here!
                     },
-                    (confirmationNumber: number, receipt: any) => {
-                        if (confirmationNumber == _numberOfConfirmation) {
+                    async (confirmationNumber: number, receipt: any) => {
+                        if (confirmationNumber == _options.numberOfConfirmation) {
                             var event = this.web3Single.decodeLog(this.abiRequestCore, 'Refunded', receipt.events[0]);
-                            return resolve({ requestId: event.requestId, amountRefunded: event.amountRefunded, transactionHash: receipt.transactionHash });
+                            let request = await this.getRequestAsync(event.requestId);
+                            return resolve({ request: request, transactionHash: receipt.transactionHash});
                         }
                     },
                     (error: Error) => {
                         return reject(error);
                     },
+<<<<<<< HEAD
                     _amount,
                     _from,
                     _gasPrice,
                     _gasLimit);
             } catch (e) {
+=======
+                    _options);
+            } catch(e) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                 return reject(e);
             }
         });
@@ -552,6 +682,7 @@ export default class RequestEthereumService {
         _callbackTransactionReceipt: Types.CallbackTransactionReceipt,
         _callbackTransactionConfirmation: Types.CallbackTransactionConfirmation,
         _callbackTransactionError: Types.CallbackTransactionError,
+<<<<<<< HEAD
         _from ? : string,
         _gasPrice ? : any,
         _gasLimit ? : any): Promise < any > {
@@ -562,11 +693,20 @@ export default class RequestEthereumService {
         try {
             let request = await this.getRequestAsync(_requestId);
             let account = _from || await this.web3Single.getDefaultAccount();
+=======
+        _options ? : any): Promise<any> {
+        _options = this.web3Single.setUpOptions(_options);
+        _options.value = new BigNumber(_amount);
+        
+        try {
+            let request = await this.getRequestAsync(_requestId);    
+            let account = _options.from || await this.web3Single.getDefaultAccount();
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
 
             // TODO check if this is possible ? (quid if other tx pending)
             if (!this.web3Single.isHexStrictBytes32(_requestId)) return _callbackTransactionError(Error('_requestId must be a 32 bytes hex string (eg.: \'0x0000000000000000000000000000000000000000000000000000000000000000\''));
             // TODO use bigNumber
-            if (_amount.lt(0)) return _callbackTransactionError(Error('_amount must a positive integer'));
+            if (_options.value.lt(0)) return _callbackTransactionError(Error('_amount must a positive integer'));
 
             if (request.state != Types.State.Accepted) {
                 return _callbackTransactionError(Error('request must be accepted'));
@@ -574,7 +714,11 @@ export default class RequestEthereumService {
             if (!this.web3Single.areSameAddressesNoChecksum(account, request.payee)) {
                 return _callbackTransactionError(Error('account must be payee'));
             }
+<<<<<<< HEAD
             if (_amount > request.amountPaid) {
+=======
+            if ( _options.value.gt(request.amountPaid) ) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                 return _callbackTransactionError(Error('You cannot payback more than what has been paid'));
             }
 
@@ -586,11 +730,16 @@ export default class RequestEthereumService {
                 _callbackTransactionReceipt,
                 _callbackTransactionConfirmation,
                 _callbackTransactionError,
+<<<<<<< HEAD
                 _amount,
                 _from,
                 _gasPrice,
                 _gasLimit);
         } catch (e) {
+=======
+                _options);
+        } catch(e) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
             throw e;
         }
     }
@@ -599,11 +748,10 @@ export default class RequestEthereumService {
     public discountAsync(
         _requestId: string,
         _amount: any,
-        _numberOfConfirmation: number = 0,
-        _from ? : string,
-        _gasPrice ? : any,
-        _gasLimit ? : any): Promise < any > {
+        _options ? : any): Promise < any > {
+        _options = this.web3Single.setUpOptions(_options);
         _amount = new BigNumber(_amount);
+<<<<<<< HEAD
         if (_gasPrice) _gasPrice = new BigNumber(_gasPrice);
         if (_gasLimit) _gasLimit = new BigNumber(_gasLimit);
 
@@ -611,6 +759,13 @@ export default class RequestEthereumService {
             try {
                 let request = await this.getRequestAsync(_requestId);
                 let account = _from || await this.web3Single.getDefaultAccount();
+=======
+        
+        return new Promise(async (resolve, reject) => {
+            try {
+                let request = await this.getRequestAsync(_requestId);    
+                let account = _options.from || await this.web3Single.getDefaultAccount();
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
 
                 // TODO check if this is possible ? (quid if other tx pending)
                 if (!this.web3Single.isHexStrictBytes32(_requestId)) return reject(Error('_requestId must be a 32 bytes hex string (eg.: \'0x0000000000000000000000000000000000000000000000000000000000000000\''));
@@ -638,20 +793,26 @@ export default class RequestEthereumService {
                     (receipt: any) => {
                         // we do nothing here!
                     },
-                    (confirmationNumber: number, receipt: any) => {
-                        if (confirmationNumber == _numberOfConfirmation) {
+                    async (confirmationNumber: number, receipt: any) => {
+                        if (confirmationNumber == _options.numberOfConfirmation) {
                             var event = this.web3Single.decodeLog(this.abiRequestCore, 'AddSubtract', receipt.events[0]);
-                            return resolve({ requestId: event.requestId, transactionHash: receipt.transactionHash });
+                            let request = await this.getRequestAsync(event.requestId);
+                            return resolve({ request: request, transactionHash: receipt.transactionHash});
                         }
                     },
                     (error: Error) => {
                         return reject(error);
                     },
+<<<<<<< HEAD
                     undefined,
                     _from,
                     _gasPrice,
                     _gasLimit);
             } catch (e) {
+=======
+                    _options);
+            } catch(e) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
                 return reject(e);
             }
         });
@@ -664,6 +825,7 @@ export default class RequestEthereumService {
         _callbackTransactionReceipt: Types.CallbackTransactionReceipt,
         _callbackTransactionConfirmation: Types.CallbackTransactionConfirmation,
         _callbackTransactionError: Types.CallbackTransactionError,
+<<<<<<< HEAD
         _from ? : string,
         _gasPrice ? : any,
         _gasLimit ? : any): Promise < any > {
@@ -674,11 +836,20 @@ export default class RequestEthereumService {
         try {
             let request = await this.getRequestAsync(_requestId);
             let account = _from || await this.web3Single.getDefaultAccount();
+=======
+        _options ? : any): Promise<any> {
+        _amount = new BigNumber(_amount);
+        _options = this.web3Single.setUpOptions(_options);
+
+        try {
+            let request = await this.getRequestAsync(_requestId);    
+            let account = _options.from || await this.web3Single.getDefaultAccount();
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
 
             // TODO check if this is possible ? (quid if other tx pending)
             if (!this.web3Single.isHexStrictBytes32(_requestId)) return _callbackTransactionError(Error('_requestId must be a 32 bytes hex string (eg.: \'0x0000000000000000000000000000000000000000000000000000000000000000\''));
             // TODO use bigNumber
-            if (_amount.lt(0) /*|| !_amount.isInteger()*/ ) return _callbackTransactionError(Error('_amount must a positive integer'));
+            if (_amount.lt(0)) return _callbackTransactionError(Error('_amount must a positive integer'));
 
             if (request.state == Types.State.Canceled) {
                 return _callbackTransactionError(Error('request must be accepted or created'));
@@ -698,16 +869,22 @@ export default class RequestEthereumService {
                 _callbackTransactionReceipt,
                 _callbackTransactionConfirmation,
                 _callbackTransactionError,
+<<<<<<< HEAD
                 undefined,
                 _from,
                 _gasPrice,
                 _gasLimit);
         } catch (e) {
+=======
+                _options);
+        } catch(e) {
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
             throw e;
         }
     }
 
 
+<<<<<<< HEAD
     public withdrawAsync(
         _numberOfConfirmation: number = 0,
         _from ? : string,
@@ -716,6 +893,11 @@ export default class RequestEthereumService {
         if (_gasPrice) _gasPrice = new BigNumber(_gasPrice);
         if (_gasLimit) _gasLimit = new BigNumber(_gasLimit);
 
+=======
+    public withdrawAsync(_options ? : any): Promise < any > {
+        _options = this.web3Single.setUpOptions(_options);
+        
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
         return new Promise((resolve, reject) => {
             var method = this.instanceRequestEthereum.methods.withdraw();
 
@@ -728,17 +910,14 @@ export default class RequestEthereumService {
                     // we do nothing here!
                 },
                 (confirmationNumber: number, receipt: any) => {
-                    if (confirmationNumber == _numberOfConfirmation) {
+                    if (confirmationNumber == _options.numberOfConfirmation) {
                         return resolve({ transactionHash: receipt.transactionHash });
                     }
                 },
                 (error: Error) => {
                     return reject(error);
                 },
-                undefined,
-                _from,
-                _gasPrice,
-                _gasLimit);
+                _options);
         });
     }
 
@@ -747,12 +926,18 @@ export default class RequestEthereumService {
         _callbackTransactionReceipt: Types.CallbackTransactionReceipt,
         _callbackTransactionConfirmation: Types.CallbackTransactionConfirmation,
         _callbackTransactionError: Types.CallbackTransactionError,
+<<<<<<< HEAD
         _from ? : string,
         _gasPrice ? : any,
         _gasLimit ? : any): void {
         if (_gasPrice) _gasPrice = new BigNumber(_gasPrice);
         if (_gasLimit) _gasLimit = new BigNumber(_gasLimit);
 
+=======
+        _options ? : any): void {
+        _options = this.web3Single.setUpOptions(_options);
+        
+>>>>>>> 42d9d7a0814b28a249e989f44dd9681e0d111579
         var method = this.instanceRequestEthereum.methods.withdraw();
 
         this.web3Single.broadcastMethod(
@@ -761,10 +946,7 @@ export default class RequestEthereumService {
             _callbackTransactionReceipt,
             _callbackTransactionConfirmation,
             _callbackTransactionError,
-            undefined,
-            _from,
-            _gasPrice,
-            _gasLimit);
+            _options);
     }
 
     public getRequestAsync(
@@ -776,6 +958,7 @@ export default class RequestEthereumService {
                 if (err) return reject(err);
 
                 let dataResult: any = {
+                    requestId: _requestId,
                     creator: data.creator,
                     payee: data.payee,
                     payer: data.payer,
@@ -796,7 +979,7 @@ export default class RequestEthereumService {
 
                 if (dataResult.details) {
                     try {
-                        dataResult.details = JSON.parse(await this.ipfs.getFileAsync(dataResult.details));
+                        dataResult.details = {hash:dataResult.details, data:JSON.parse(await this.ipfs.getFileAsync(dataResult.details))};
                     } catch (e) {
                         return reject(e);
                     }
@@ -815,6 +998,7 @@ export default class RequestEthereumService {
             if (err) return _callbackGetRequest(err, data);
 
             let dataResult: any = {
+                requestId: _requestId,
                 creator: data.creator,
                 payee: data.payee,
                 payer: data.payer,
@@ -837,12 +1021,12 @@ export default class RequestEthereumService {
                 // get IPFS data :
                 this.ipfs.getFile(dataResult.details, (err: Error, data: string) => {
                     if (err) return _callbackGetRequest(err, dataResult);
-                    dataResult.details = JSON.parse(data);
+                    dataResult.details = {hash:dataResult, data:JSON.parse(data)};
                     return _callbackGetRequest(err, dataResult);
                 });
             } else {
                 return _callbackGetRequest(err, dataResult);
             }
         });
-    }
+    }        
 }
